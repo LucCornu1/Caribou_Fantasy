@@ -28,6 +28,9 @@ class wanderScene extends Phaser.Scene
         this.load.spritesheet('water_splash', 'assets/Water_Effect/WaterSplash02.png', {frameWidth: 66, frameHeight: 77, endFrame: 19});
 
         this.load.spritesheet('air_burst', 'assets/Wind_Effect/Air_Explosion.png', {frameWidth: 32, frameHeight: 32, endFrame: 19});
+
+        this.load.audio('wanderSound', ['audio/04forest1.ogg']);
+        this.load.audio('gameOver', ['audio/13gameover1V1NL.ogg']);
     }
 
     create ()
@@ -38,6 +41,12 @@ class wanderScene extends Phaser.Scene
         player1.beginPlay();
 
         generateControls();
+
+        Music = myGame.sound.add('wanderSound', {volume: 0.3});
+        
+        Music.loop = true;
+        Music.play();
+        // Music.stop();
     }
 
     update ()
@@ -154,6 +163,11 @@ class gameOver extends Phaser.Scene
         });
 
         myGame.add.image(150, 100, 'GameOver').setOrigin(0, 0);
+
+        Music.stop();
+        Music = myGame.sound.add('gameOver', {volume: 0.3});
+        Music.loop = false;
+        Music.play();
     }
 
     update ()

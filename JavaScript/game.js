@@ -60,6 +60,7 @@ monsteronomicon.createMonster('fire_monsterBig', 200, 8, 2, fire_hoof, fire_horn
 monsteronomicon.createMonster('ice_monsterBig', 400, 3, 7, ice_spike, frost_spear);
 monsteronomicon.createMonster('dog_monsterBig', 250, 5, 4, fire_bite, fire_claw);
 
+var Music;
 
 
 
