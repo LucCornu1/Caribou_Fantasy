@@ -1,40 +1,41 @@
 class skill
 {
-    // public
+// public
     attackName = 'error_none';
     bReady = true;
-    effect;
-    // private
-    #dmgMultiplier = 1;
-    constructor(name, damage_multiplier, effect_name)
+    constructor(name, damage_multiplier, cast_time, effect_name)
     {
         this.attackName = name;
-        this.#dmgMultiplier = damage_multiplier;
-
+        this.dmgMultiplier = damage_multiplier;
+        this.castTime = cast_time;
         this.effectName = effect_name;
-
-        this.effect = myGame.add.sprite(400, 450, this.effectName).setScale(2);
-        this.effect.visible = false;
-    }
-
-
-    // getters & setters
-    get dmgMultiplier()
-    {
-        return this.#dmgMultiplier;
     }
 
 
     // Functions
     useSkill(attacker, target)
     {
-        this.effect.visible = true;
-        this.effect.anims.play(this.effectName);
+        this.bReady = false;
 
-        this.effect.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function () {
-            this.effect.visible = false;
-            // console.log('Hallo');
-        }, this);
+        this.effect = myGame.add.sprite(400, 450, this.effectName).setScale(2);
+        this.effect.visible = false;
+
+        myGame.time.delayedCall(this.castTime * 1000, this.castFinish, [attacker, target], this);
+    }
+
+    castFinish(attacker, target)
+    {
+        this.bReady = true;
+
+        if(attacker.type == "player")
+        {
+            this.effect.visible = true;
+            this.effect.anims.play(this.effectName);
+
+            this.effect.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function () {
+                this.effect.visible = false;
+            }, this);
+        }        
     }
 }
 
@@ -43,17 +44,28 @@ class skill
 
 class damageSkill extends skill
 {
-    constructor(name, damage_multiplier, effect_name = 'error_none')
+    constructor(name, damage_multiplier, cast_time, effect_name = 'error_none')
     {
-        super(name, damage_multiplier, effect_name);
+        super(name, damage_multiplier, cast_time, effect_name);
     }
 
     useSkill(attacker, target)
     {
-        super.useSkill(attacker, target);
+        if (this.bReady)
+        {
+            super.useSkill(attacker, target);
+        }
+    }
 
-        var currentDamage = this.dmgMultiplier * attacker.attack;
-        target.damage(currentDamage);
+    castFinish(attacker, target)
+    {
+        if (attacker.currentHealth > 0)
+        {
+            super.castFinish(attacker, target);
+
+            var currentDamage = this.dmgMultiplier * attacker.attack;
+            target.damage(currentDamage);
+        }
     }
 }
 
@@ -62,16 +74,27 @@ class damageSkill extends skill
 
 class healSkill extends skill
 {
-    constructor(name, damage_multiplier, effect_name = 'error_none')
+    constructor(name, damage_multiplier, cast_time, effect_name = 'error_none')
     {
-        super(name, damage_multiplier, effect_name);
+        super(name, damage_multiplier, cast_time, effect_name);
     }
 
     useSkill(attacker, target)
     {
         super.useSkill(attacker, target);
+    }
 
-        var currentHeal = this.dmgMultiplier * attacker.attack;
-        target.heal(currentHeal);
+    castFinish(attacker, target)
+    {
+        if (attacker.currentHealth > 0)
+        {
+            this.bReady = true;
+
+            var currentHeal = this.dmgMultiplier * attacker.attack;
+    
+            target.forEach(player => {
+                player.heal(currentHeal);
+            });
+        }
     }
 }

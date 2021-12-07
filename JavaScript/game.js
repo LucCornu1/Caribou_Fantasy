@@ -15,13 +15,40 @@ var config = {
 
 
 
+
 var game = new Phaser.Game(config);
 
 var myGame;
 var layer;
-var player1
+var player1, player2, player3;
+
+player1 = new player(100, 5, 5, 0);
+player2 = new player(100, 5, 5, 1);
+player3 = new player(100, 5, 5, 2);
 
 var player_combat;
+
+
+var monsteronomicon = new bestiaire();
+var spellonomicon = new spellbook();
+
+var fire_spit = new damageSkill('fire_spit', 5, 4, 'fire_spit');
+var fire_surge = new damageSkill('fire_surge', 1.5, 2, 'fire_surge');
+
+var water_spike = new damageSkill('water_spike', 5, 4, 'water_spike');
+var water_splash = new damageSkill('water_splash', 1.5, 2, 'water_splash');
+
+var air_burst = new damageSkill('air_burst', 1.5, 1.5, 'air_burst');
+var healing = new healSkill('healing', 5, 5, 'healing');
+
+player1.addSkills([fire_spit, fire_surge]);
+player2.addSkills([water_spike, water_splash]);
+player3.addSkills([air_burst, healing]);
+
+monsteronomicon.createMonster('fire_monsterBig', 200, 8, 2, fire_spit, fire_surge);
+monsteronomicon.createMonster('ice_monsterBig', 400, 3, 5, water_spike, water_splash);
+monsteronomicon.createMonster('dog_monsterBig', 200, 5, 4, fire_spit, fire_surge);
+
 
 
 
@@ -168,35 +195,42 @@ function generateControls()
 	});
 }
 
-function generateFX()
-{
-    myGame.anims.create({
-        key: 'fire_surge',
-        frames: myGame.anims.generateFrameNumbers('fire_surge', { start: 0, end: 16 }),
-        frameRate: 16,
-        DestroyOnComplete: true
-    });
-
-    myGame.anims.create({
-        key: 'fire_spit',
-        frames: myGame.anims.generateFrameNumbers('fire_spit', { start: -1, end: 17 }),
-        frameRate: 16,
-        DestroyOnComplete: true
-    });
-}
-
 function generateCombatControls()
 {
-    // Attack 1
-	myGame.input.keyboard.on('keydown-L', function (event) {
+    // P1 Attack 1
+	myGame.input.keyboard.on('keydown-W', function (event) {
 
-		player_combat.ennemiCreature.useSkill_i(player_combat.ennemiCreature, 0);
+		player_combat.playerArray[0].useSkill_i(player_combat.ennemiCreature, 0);
 	});
 
-    // Attack 2
-	myGame.input.keyboard.on('keydown-M', function (event) {
+    // P1 Attack 2
+	myGame.input.keyboard.on('keydown-X', function (event) {
 
-		player_combat.ennemiCreature.useSkill_i(player_combat.ennemiCreature, 1);
+		player_combat.playerArray[0].useSkill_i(player_combat.ennemiCreature, 1);
+	});
+
+	// P2 Attack 1
+	myGame.input.keyboard.on('keydown-C', function (event) {
+
+		player_combat.playerArray[1].useSkill_i(player_combat.ennemiCreature, 0);
+	});
+
+    // P2 Attack 2
+	myGame.input.keyboard.on('keydown-V', function (event) {
+
+		player_combat.playerArray[1].useSkill_i(player_combat.ennemiCreature, 1);
+	});
+
+	// P3 Attack 1
+	myGame.input.keyboard.on('keydown-B', function (event) {
+
+		player_combat.playerArray[2].useSkill_i(player_combat.ennemiCreature, 0);
+	});
+
+    // P3 Attack 2
+	myGame.input.keyboard.on('keydown-N', function (event) {
+
+		player_combat.playerArray[2].useSkill_i(player_combat.playerArray, 1);
 	});
 
 	// wander
@@ -204,4 +238,30 @@ function generateCombatControls()
 
 		myGame.scene.start('wanderScene');
 	});
+}
+
+function clamp(min, max, number)
+{
+    if (number < min)
+    {
+        number = min;
+    }
+    else if (number > max) {
+        number = max;
+    }
+
+    return number;
+}
+
+function clampLoop(min, max, number)
+{
+    if (number < min)
+    {
+        number = max;
+    }
+    else if (number > max) {
+        number = min
+    }
+
+    return number;
 }

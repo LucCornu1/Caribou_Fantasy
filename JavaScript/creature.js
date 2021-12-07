@@ -1,22 +1,22 @@
 class creature extends character
 {
-    // public
+// public
     player_c;
     creatureName = 'error_noName';
-    // bDead = false;
+// private
+    #graphics;
     constructor(name = 'none', stat_HP, stat_Attack, stat_Defense)
     {
         super(stat_HP, stat_Attack, stat_Defense);
 
         if (name != 'none')
         {
-            this.player_c = myGame.add.image(400, 460, name).setScale(0.5);
             this.creatureName = name;
         }else{
             console.log('ERROR : the creature has no name');
         }
 
-        // generateAnims('fire_monster', [8, 13, 16, 23, 24, 29, 30, 37]);
+        this.type = "creature";
     }
 
     // call on create
@@ -24,74 +24,52 @@ class creature extends character
     {
         super.beginPlay();
 
-        // none
+        this.player_c = myGame.add.image(400, 460, this.creatureName).setScale(0.5);
+
+        // console.log('JA');
+
+        this.#graphics = myGame.add.graphics();
     }
 
     // call on update
-    play()
+    play(playerArray)
     {
         super.play();
 
-        if (this.currentHealth > 0)
-        {
+        this.#graphics.clear();
+        this.#graphics.fillStyle(0x2d2d2d);
+        this.#graphics.fillRect(300, 550, player_combat.ennemiCreature.maxHealth, 16);
+        this.#graphics.fillStyle(0x2dff2d);
+        this.#graphics.fillRect(300, 550, player_combat.ennemiCreature.currentHealth, 16);
 
-        }else{
+        /*this.#graphics.fillStyle(0x00C7FF, 1);
+        this.#graphics.slice(550, 450, 10, Phaser.Math.DegToRad(360), Phaser.Math.DegToRad(0), true);
+        this.#graphics.fillPath();*/
+
+
+        var nb_PlayersAlive = 0;
+
+        playerArray.forEach(player => {
+            if (player.currentHealth > 0)
+            {
+                nb_PlayersAlive++;
+            }
+        });
+
+        if (this.currentHealth > 0 && nb_PlayersAlive > 0)
+        {
+            // console.log(this.currentHealth);
+            var target = playerArray[Phaser.Math.Between(0, 2)];
+
+            while (target.currentHealth <= 0)
+            {
+                target = playerArray[Phaser.Math.Between(0, 2)];
+            }
+
+            this.useSkill_i(target, Phaser.Math.Between(0, 1)); // Phaser.Math.beetween(0, 2)
+        }else if (this.currentHealth <= 0) {
             // this.bDead = true;
             this.player_c.visible = false;
         }
     }
-
-
-    // added
-    /*generateAnims(numArray)
-    {
-        myGame.anims.create({
-			key: 'idle'+this.creatureName,
-			frames: myGame.anims.generateFrameNumbers(this.creatureName, { start: numArray[0], end: numArray[1] }),
-			frameRate: 10,
-			repeat: -1
-		});
-
-		myGame.anims.create({
-			key: 'attack'+this.creatureName,
-			frames: myGame.anims.generateFrameNumbers(this.creatureName, { start: numArray[2], end: numArray[3] }),
-			frameRate: 10,
-			repeat: -1
-		});
-
-		myGame.anims.create({
-			key: 'damage'+this.creatureName,
-			frames: myGame.anims.generateFrameNumbers(this.creatureName, { start: numArray[4], end: numArray[5] }),
-			frameRate: 10,
-			repeat: -1
-		});
-
-		myGame.anims.create({
-			key: 'death'+this.creatureName,
-			frames: myGame.anims.generateFrameNumbers(this.creatureName, { start: numArray[6], end: numArray[7] }),
-			frameRate: 10,
-			repeat: 0
-		});
-    }*/
-
-    /*idleAnimation()
-    {
-        this.player_c.anims.play('idle'+this.creatureName, true);
-    }
-
-    attackAnimation()
-    {
-        this.player_c.anims.play('attack'+this.creatureName, true);
-    }
-
-    damageAnimation()
-    {
-        this.player_c.anims.play('damage'+this.creatureName, true);
-    }
-
-    deathAnimation()
-    {
-        this.player_c.anims.play('death'+this.creatureName);
-    }*/
-
 }

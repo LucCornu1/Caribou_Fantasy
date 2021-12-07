@@ -14,11 +14,10 @@ class wanderScene extends Phaser.Scene
         this.load.spritesheet('ice_monster', 'assets/characters/Ice_Elemental_Sprite_Sheet.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('leaf_monster', 'assets/characters/Leaf_Elemental_Sprite_Sheet.png', { frameWidth: 32, frameHeight: 32 });*/
 
-        this.load.spritesheet('fire_spit', 'assets/Fire_Effect/Explosion2_SpriteSheet.png', {frameWidth: 48, frameHeight: 48, endFrame: 17});
-        this.load.spritesheet('fire_surge', 'assets/Fire_Effect/Explosion_SpriteSheet.png', {frameWidth: 64, frameHeight: 64, endFrame: 16}); // 64 * 64
-
         this.load.image('back_image', 'assets/forest.png');
         this.load.image('fire_monsterBig', 'assets/Static/Side/FireHorse.png');
+        this.load.image('ice_monsterBig', 'assets/Static/Side/Ice.png');
+        this.load.image('dog_monsterBig', 'assets/Static/Side/Cerberus.png');
     }
 
     create ()
@@ -26,8 +25,6 @@ class wanderScene extends Phaser.Scene
         myGame = this;
 
         generateFloor();
-
-        player1 = new player();
         player1.beginPlay();
 
         generateControls();
@@ -40,6 +37,8 @@ class wanderScene extends Phaser.Scene
 }
 
 
+
+
 class combatScene extends Phaser.Scene
 {
     constructor()
@@ -47,59 +46,85 @@ class combatScene extends Phaser.Scene
         super('combatScene');
     }
 
+    preload ()
+    {
+        this.load.spritesheet('fire_spit', 'assets/Fire_Effect/Explosion2_SpriteSheet.png', {frameWidth: 48, frameHeight: 48, endFrame: 17});
+        this.load.spritesheet('fire_surge', 'assets/Fire_Effect/Explosion_SpriteSheet.png', {frameWidth: 64, frameHeight: 64, endFrame: 16}); // 64 * 64
+
+        this.load.spritesheet('water_spike', 'assets/Water_Effect/WaterSpike01.png', {frameWidth: 64, frameHeight: 80, endFrame: 19});
+        this.load.spritesheet('water_splash', 'assets/Water_Effect/WaterSplash02.png', {frameWidth: 66, frameHeight: 77, endFrame: 19});
+
+        this.load.spritesheet('air_burst', 'assets/Wind_Effect/Air_Explosion.png', {frameWidth: 32, frameHeight: 32, endFrame: 19});
+    }
+
     create ()
     {
         myGame = this;
-
+        
+        this.generateFX();
         this.initCombat();
-
-        generateFX();
 
         generateCombatControls();
 
-        this.debug = this.add.graphics();
+        player_combat.beginPlay();
     }
 
     update ()
     {
         player_combat.play();
-
-        this.debug.clear();
-
-        // const size = 100;
-
-        this.debug.fillStyle(0x2d2d2d);
-        this.debug.fillRect(64, 64, player_combat.ennemiCreature.maxHealth * 2, 16);
-
-        this.debug.fillStyle(0x2dff2d);
-        this.debug.fillRect(64, 64, player_combat.ennemiCreature.currentHealth * 2, 16);
     }
 
 
     // added
     initCombat()
     {
-        /*var ice_spit = new damageSkill('ice_spit', 1.5, 5);
-        var frost = new damageSkill('frost', 2, 15);
-
-        var water_spit = new damageSkill('water_spit', 1.2, 2);
-        var heal = new healSkill('heal', 1.5, 8);*/
-
         this.add.image(200, 100, 'back_image').setScale(1.3);
 
-        var fire_creature = new creature('fire_monsterBig', 52, 8, 2);
+        player_combat = new combat([player1, player2, player3], this.prepareFigthers());
+    }
 
-        var fire_spit = new damageSkill('fire_spit', 1.8, 10, 'fire_spit');
-        var fire_surge = new damageSkill('fire_surge', 1.2, 4, 'fire_surge');
+    prepareFigthers()
+    {
+        var i = Phaser.Math.Between(0, monsteronomicon.getMaxId());
 
-        
-        fire_creature.addSkills([fire_spit, fire_surge]);
+        return monsteronomicon.selectMonster(i);
+    }
 
-        player1.addSkills([fire_spit, fire_surge]);
+    generateFX()
+    {
+        myGame.anims.create({
+            key: 'fire_surge',
+            frames: myGame.anims.generateFrameNumbers('fire_surge', { start: 0, end: 16 }),
+            frameRate: 16
+            // DestroyOnComplete: true
+        });
 
-        player_combat = new combat(player1, fire_creature);
-        
-        /*var ice_creature = new creature('ice_monster', 58, 4, 6, ice_spit, frost);
-        var leaf_creature = new creature('leaf_monster', 62, 5, 5, water_spit, heal);*/
+        myGame.anims.create({
+            key: 'fire_spit',
+            frames: myGame.anims.generateFrameNumbers('fire_spit', { start: 0, end: 17 }),
+            frameRate: 16
+            // DestroyOnComplete: true
+        });
+
+        myGame.anims.create({
+            key: 'water_spike',
+            frames: myGame.anims.generateFrameNumbers('water_spike', { start: 0, end: 19 }),
+            frameRate: 16
+            // DestroyOnComplete: true
+        });
+
+        myGame.anims.create({
+            key: 'water_splash',
+            frames: myGame.anims.generateFrameNumbers('water_splash', { start: 0, end: 19 }),
+            frameRate: 16
+            // DestroyOnComplete: true
+        });
+
+        myGame.anims.create({
+            key: 'air_burst',
+            frames: myGame.anims.generateFrameNumbers('air_burst', { start: 0, end: 11 }),
+            frameRate: 16
+            // DestroyOnComplete: true
+        });
     }
 }

@@ -1,6 +1,6 @@
 class combat
 {
-    // public
+// public
     bStopTime = false;
     constructor(players, ennemi)
     {
@@ -8,30 +8,21 @@ class combat
         this.ennemiCreature = ennemi;
     }
 
+    // call on create
     beginPlay()
     {
-        // none
+        this.playerArray.forEach(player => {
+            player.beginPlay();
+        });
+        this.ennemiCreature.beginPlay();
     }
 
-    // play on tick
+    // call on udpate
     play()
     {
-        this.ennemiCreature.play();
+        this.playerArray.forEach(player => {
+            player.playCombat();
+        });
+        this.ennemiCreature.play(this.playerArray);
     }
-
-}
-
-
-
-function clampLoop(min, max, number)
-{
-    if (number < min)
-    {
-        number = max;
-    }
-    else if (number > max) {
-        number = min
-    }
-
-    return number;
 }

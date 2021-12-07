@@ -5,23 +5,26 @@ class player extends character
 	direction;
 	currentPos = [0, 0];
 	targetPos = [0, 0];
+	playerNumber = 0;
 // private
+	#graphics;
 	#time;
 	#i = 0;
-	constructor(stat_HP, stat_Attack, stat_Defense)
+	constructor(stat_HP, stat_Attack, stat_Defense, number)
 	{
 		super(stat_HP, stat_Attack, stat_Defense);
 
-		this.player_ = myGame.physics.add.sprite(14, 16, 'hero');
-   		// this.player_.setCollideWorldBounds(true);
-
 		this.bIsWalking = false;
 		this.direction = 'down';
-		this.currentPos = [14, 16];
-		this.targetPos = [14, 16];
+		this.currentPos = [46, 48];
+		this.targetPos = [46, 48];
 		
 		this.#time = 24;
 		this.#i = 0;
+
+		this.playerNumber = number;
+
+		this.type = "player";
 	}
 
 	// call in create
@@ -30,6 +33,10 @@ class player extends character
 		super.beginPlay();
 
 		this.generateAnimation();
+		this.#graphics = myGame.add.graphics();
+
+		this.player_ = myGame.physics.add.sprite(46 + 290 * this.playerNumber, 48, 'hero'); // Base [14 , 16] (+32 = [46 , 48])
+   		// this.player_.setCollideWorldBounds(true);
 	}
 
 	// call in update
@@ -38,6 +45,26 @@ class player extends character
 		super.play();
 
 		this.movePlayer();
+	}
+
+	// call in update
+	playCombat()
+	{
+		this.#graphics.clear();
+        this.#graphics.fillStyle(0xff0000);
+        this.#graphics.fillRect(80 + 290 * this.playerNumber, 32, this.maxHealth, 16);
+        this.#graphics.fillStyle(0x2dff2d);
+        this.#graphics.fillRect(80 + 290 * this.playerNumber, 32, this.currentHealth, 16);
+
+		// console.log(this.bReady);
+		if (!this.bReady)
+		{
+			// console.log("faux");
+			this.#graphics.fillStyle(0x2d2d2d);
+			this.#graphics.fillRect(80 + 290 * this.playerNumber, 64, 100, 16);
+			this.#graphics.fillStyle(0x00F5FF);
+			this.#graphics.fillRect(80 + 290 * this.playerNumber, 64, this.timedEvent.getProgress() * 100, 16);
+		}
 	}
 
 
