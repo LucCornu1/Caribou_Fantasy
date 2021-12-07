@@ -83,6 +83,10 @@ class player extends character
 			}else{
 				this.#i = 0;
 				this.bIsWalking = false;
+				if (Phaser.Math.Between(0, 99) < 9)
+				{
+					myGame.scene.start('combatScene');
+				}
 			}
 		}
 		else{

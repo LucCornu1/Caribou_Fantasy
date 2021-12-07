@@ -10,7 +10,7 @@ var config = {
             debug: false
         }
     },
-    scene: [wanderScene, combatScene]
+    scene: [wanderScene, combatScene, gameOver]
 };
 
 
@@ -30,24 +30,35 @@ var player_combat;
 
 
 var monsteronomicon = new bestiaire();
-var spellonomicon = new spellbook();
 
-var fire_spit = new damageSkill('fire_spit', 5, 4, 'fire_spit');
-var fire_surge = new damageSkill('fire_surge', 1.5, 2, 'fire_surge');
 
-var water_spike = new damageSkill('water_spike', 5, 4, 'water_spike');
-var water_splash = new damageSkill('water_splash', 1.5, 2, 'water_splash');
+var fire_spit;
+var fire_surge;
 
-var air_burst = new damageSkill('air_burst', 1.5, 1.5, 'air_burst');
-var healing = new healSkill('healing', 5, 5, 'healing');
+var fire_hoof;
+var fire_horn;
+
+var fire_bite;
+var fire_claw;
+
+var water_spike;
+var water_splash;
+
+var ice_spike;
+var frost_spear;
+
+var air_burst;
+var healing;
+
+generateMagic();
 
 player1.addSkills([fire_spit, fire_surge]);
 player2.addSkills([water_spike, water_splash]);
 player3.addSkills([air_burst, healing]);
 
-monsteronomicon.createMonster('fire_monsterBig', 200, 8, 2, fire_spit, fire_surge);
-monsteronomicon.createMonster('ice_monsterBig', 400, 3, 5, water_spike, water_splash);
-monsteronomicon.createMonster('dog_monsterBig', 200, 5, 4, fire_spit, fire_surge);
+monsteronomicon.createMonster('fire_monsterBig', 200, 8, 2, fire_hoof, fire_horn);
+monsteronomicon.createMonster('ice_monsterBig', 400, 3, 7, ice_spike, frost_spear);
+monsteronomicon.createMonster('dog_monsterBig', 250, 5, 4, fire_bite, fire_claw);
 
 
 
@@ -191,7 +202,7 @@ function generateControls()
 	// combat
 	myGame.input.keyboard.on('keydown-E', function (event){
 
-		myGame.scene.start('combatScene');
+		// myGame.scene.start('combatScene');
 	});
 }
 
@@ -232,12 +243,6 @@ function generateCombatControls()
 
 		player_combat.playerArray[2].useSkill_i(player_combat.playerArray, 1);
 	});
-
-	// wander
-	myGame.input.keyboard.on('keydown-A', function (event){
-
-		myGame.scene.start('wanderScene');
-	});
 }
 
 function clamp(min, max, number)
@@ -264,4 +269,25 @@ function clampLoop(min, max, number)
     }
 
     return number;
+}
+
+function generateMagic()
+{
+	fire_spit = new damageSkill('fire_spit', 5, 4, 'fire_spit');
+	fire_surge = new damageSkill('fire_surge', 1.5, 2, 'fire_surge');
+
+	fire_hoof = new damageSkill('fire_hoof', 5, 4, 'fire_spit');
+	fire_horn = new damageSkill('fire_horn', 5, 4, 'fire_spit');
+
+	fire_bite = new damageSkill('fire_bite', 5, 4, 'fire_spit');
+	fire_claw = new damageSkill('fire_claw', 1.5, 2, 'fire_spit');
+
+	water_spike = new damageSkill('water_spike', 5, 4, 'water_spike');
+	water_splash = new damageSkill('water_splash', 1.5, 2, 'water_splash');
+
+	ice_spike = new damageSkill('ice_spike', 5, 4, 'water_spike');
+	frost_spear = new damageSkill('frost_spear', 5, 4, 'water_spike');
+
+	air_burst = new damageSkill('air_burst', 1.5, 1.5, 'air_burst');
+	healing = new healSkill('healing', 5, 5, 'healing');
 }

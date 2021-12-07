@@ -15,12 +15,17 @@ class skill
     // Functions
     useSkill(attacker, target)
     {
-        this.bReady = false;
+        // console.log(this.attackName + this.bReady);
 
-        this.effect = myGame.add.sprite(400, 450, this.effectName).setScale(2);
-        this.effect.visible = false;
+        if (this.bReady)
+        {
+            this.bReady = false;
 
-        myGame.time.delayedCall(this.castTime * 1000, this.castFinish, [attacker, target], this);
+            this.effect = myGame.add.sprite(400, 450, this.effectName).setScale(2);
+            this.effect.visible = false;
+
+            myGame.time.delayedCall(this.castTime * 1000, this.castFinish, [attacker, target], this);
+        }
     }
 
     castFinish(attacker, target)
@@ -51,14 +56,13 @@ class damageSkill extends skill
 
     useSkill(attacker, target)
     {
-        if (this.bReady)
-        {
-            super.useSkill(attacker, target);
-        }
+        super.useSkill(attacker, target);
     }
 
     castFinish(attacker, target)
     {
+        this.bReady = true;
+
         if (attacker.currentHealth > 0)
         {
             super.castFinish(attacker, target);

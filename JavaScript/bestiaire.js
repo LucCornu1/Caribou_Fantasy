@@ -31,6 +31,16 @@ class bestiaire
         return this.monstersArray[id];
     }
 
+    selectMonsterByName(name)
+    {
+        this.monstersArray.forEach(creature => {
+            if (creature.creatureName == name)
+            {
+                return creature;
+            }
+        });
+    }
+
     getMaxId()
     {
         return this.monstersArray.length - 1;
@@ -40,7 +50,7 @@ class bestiaire
 
 
 
-class spellbook
+/*class spellbook
 {
     // public
     spellsArray = [];
@@ -66,7 +76,7 @@ class spellbook
     deleteSpell(name)
     {
         this.spellsArray.forEach(spell => {
-            if (spell.effectName == name)
+            if (spell.attackName == name)
             {
                 this.spellsArray.splice(this.spellsArray.indexOf(spell), 1);
             }
@@ -78,8 +88,21 @@ class spellbook
         return this.spellsArray[id];
     }
 
+    selectSpellByName(name)
+    {
+        var i = 0;
+        this.spellsArray.forEach(spell => {
+            if (spell.attackName == name)
+            {
+                return this.spellsArray[i];
+            }else{
+                i++
+            }
+        });
+    }
+
     getMaxId()
     {
         return this.spellsArray.length - 1;
     }
-}
+}*/

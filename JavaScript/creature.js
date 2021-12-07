@@ -5,7 +5,7 @@ class creature extends character
     creatureName = 'error_noName';
 // private
     #graphics;
-    constructor(name = 'none', stat_HP, stat_Attack, stat_Defense)
+    constructor(name = 'none', stat_HP = 0, stat_Attack = 0, stat_Defense = 0)
     {
         super(stat_HP, stat_Attack, stat_Defense);
 

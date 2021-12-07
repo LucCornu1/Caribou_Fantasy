@@ -18,6 +18,16 @@ class wanderScene extends Phaser.Scene
         this.load.image('fire_monsterBig', 'assets/Static/Side/FireHorse.png');
         this.load.image('ice_monsterBig', 'assets/Static/Side/Ice.png');
         this.load.image('dog_monsterBig', 'assets/Static/Side/Cerberus.png');
+
+        this.load.image('GameOver', 'assets/GameOver.jpg');
+
+        this.load.spritesheet('fire_spit', 'assets/Fire_Effect/Explosion2_SpriteSheet.png', {frameWidth: 48, frameHeight: 48, endFrame: 17});
+        this.load.spritesheet('fire_surge', 'assets/Fire_Effect/Explosion_SpriteSheet.png', {frameWidth: 64, frameHeight: 64, endFrame: 16}); // 64 * 64
+
+        this.load.spritesheet('water_spike', 'assets/Water_Effect/WaterSpike01.png', {frameWidth: 64, frameHeight: 80, endFrame: 19});
+        this.load.spritesheet('water_splash', 'assets/Water_Effect/WaterSplash02.png', {frameWidth: 66, frameHeight: 77, endFrame: 19});
+
+        this.load.spritesheet('air_burst', 'assets/Wind_Effect/Air_Explosion.png', {frameWidth: 32, frameHeight: 32, endFrame: 19});
     }
 
     create ()
@@ -46,17 +56,6 @@ class combatScene extends Phaser.Scene
         super('combatScene');
     }
 
-    preload ()
-    {
-        this.load.spritesheet('fire_spit', 'assets/Fire_Effect/Explosion2_SpriteSheet.png', {frameWidth: 48, frameHeight: 48, endFrame: 17});
-        this.load.spritesheet('fire_surge', 'assets/Fire_Effect/Explosion_SpriteSheet.png', {frameWidth: 64, frameHeight: 64, endFrame: 16}); // 64 * 64
-
-        this.load.spritesheet('water_spike', 'assets/Water_Effect/WaterSpike01.png', {frameWidth: 64, frameHeight: 80, endFrame: 19});
-        this.load.spritesheet('water_splash', 'assets/Water_Effect/WaterSplash02.png', {frameWidth: 66, frameHeight: 77, endFrame: 19});
-
-        this.load.spritesheet('air_burst', 'assets/Wind_Effect/Air_Explosion.png', {frameWidth: 32, frameHeight: 32, endFrame: 19});
-    }
-
     create ()
     {
         myGame = this;
@@ -78,14 +77,19 @@ class combatScene extends Phaser.Scene
     // added
     initCombat()
     {
-        this.add.image(200, 100, 'back_image').setScale(1.3);
+        myGame.add.image(200, 100, 'back_image').setScale(1.3);
 
-        player_combat = new combat([player1, player2, player3], this.prepareFigthers());
+        player_combat = new combat([player1, player2, player3], this.prepareMonster());
     }
 
-    prepareFigthers()
+    prepareMonster()
     {
         var i = Phaser.Math.Between(0, monsteronomicon.getMaxId());
+
+        while (monsteronomicon.selectMonster(i).currentHealth <= 0)
+        {
+            i = Phaser.Math.Between(0, monsteronomicon.getMaxId());
+        }
 
         return monsteronomicon.selectMonster(i);
     }
@@ -127,4 +131,34 @@ class combatScene extends Phaser.Scene
             // DestroyOnComplete: true
         });
     }
+}
+
+
+
+
+class gameOver extends Phaser.Scene
+{
+    constructor()
+    {
+        super('gameOver');
+    }
+
+    create ()
+    {
+        myGame = this;
+        
+        // wander
+        myGame.input.keyboard.on('keydown-A', function (event){
+
+            myGame.scene.start('wanderScene');
+        });
+
+        myGame.add.image(150, 100, 'GameOver').setOrigin(0, 0);
+    }
+
+    update ()
+    {
+        
+    }
+    
 }
