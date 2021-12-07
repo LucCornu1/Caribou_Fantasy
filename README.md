@@ -9,3 +9,5 @@ Les touches pour attaquer :
 J1 : W & X ;
 J2 : C & V ;
 J3 : B & N ;
+
+Sur l'écran de game over, la touche A sert à reset le jeu.
