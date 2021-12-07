@@ -1,4 +1,5 @@
 class bestiaire
+// Un bestiaire qui stock les monstres
 {
 // public
     monstersArray = [];
@@ -8,6 +9,7 @@ class bestiaire
     }
 
     createMonster(name, health, attack, defense, skill0, skill1)
+    // Créer un monstre et le stock
     {
         var newCreature = new creature(name, health, attack, defense);
 
@@ -17,6 +19,7 @@ class bestiaire
     }
 
     deleteMonster(name)
+    // Supprime un monstre de la liste
     {
         this.monstersArray.forEach(creature => {
             if (creature.creatureName == name)
@@ -27,11 +30,13 @@ class bestiaire
     }
 
     selectMonster(id)
+    // Sélectionne un monstre selon un ID
     {
         return this.monstersArray[id];
     }
 
     selectMonsterByName(name)
+    // Sélectionne un monstre selon un nom
     {
         this.monstersArray.forEach(creature => {
             if (creature.creatureName == name)
@@ -42,67 +47,8 @@ class bestiaire
     }
 
     getMaxId()
+    // Retourne l'ID maximale de la liste de bestiaire
     {
         return this.monstersArray.length - 1;
     }
 }
-
-
-
-
-/*class spellbook
-{
-    // public
-    spellsArray = [];
-    constructor(spells = [])
-    {
-        this.spellsArray = spells;
-    }
-
-    createDamageSpell(name, damage_multiplier, cast_time, effect_name = 'error_none')
-    {
-        var newSpell = new damageSkill(name, damage_multiplier, cast_time, effect_name);
-
-        this.spellsArray.push(newSpell);
-    }
-
-    createHealSpell(name, damage_multiplier, cast_time, effect_name = 'error_none')
-    {
-        var newSpell = new healSkill(name, damage_multiplier, cast_time, effect_name);
-
-        this.spellsArray.push(newSpell);
-    }
-
-    deleteSpell(name)
-    {
-        this.spellsArray.forEach(spell => {
-            if (spell.attackName == name)
-            {
-                this.spellsArray.splice(this.spellsArray.indexOf(spell), 1);
-            }
-        });     
-    }
-
-    selectSpell(id)
-    {
-        return this.spellsArray[id];
-    }
-
-    selectSpellByName(name)
-    {
-        var i = 0;
-        this.spellsArray.forEach(spell => {
-            if (spell.attackName == name)
-            {
-                return this.spellsArray[i];
-            }else{
-                i++
-            }
-        });
-    }
-
-    getMaxId()
-    {
-        return this.spellsArray.length - 1;
-    }
-}*/

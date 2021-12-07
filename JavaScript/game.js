@@ -1,4 +1,4 @@
-// Variables
+// Variables de jeu
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -13,59 +13,55 @@ var config = {
     scene: [wanderScene, combatScene, gameOver]
 };
 
-
-
-
 var game = new Phaser.Game(config);
-
 var myGame;
 var layer;
-var player1, player2, player3;
 
+// Variables joueurs
+var player1, player2, player3;
 player1 = new player(100, 5, 5, 0);
 player2 = new player(100, 5, 5, 1);
 player3 = new player(100, 5, 5, 2);
 
+// Variables combat
 var player_combat;
-
-
 var monsteronomicon = new bestiaire();
 
-
+// Variables magie
 var fire_spit;
 var fire_surge;
-
 var fire_hoof;
 var fire_horn;
-
 var fire_bite;
 var fire_claw;
-
 var water_spike;
 var water_splash;
-
 var ice_spike;
 var frost_spear;
-
 var air_burst;
 var healing;
-
 generateMagic();
 
+// Ajout des sorts aux personnages joueurs
 player1.addSkills([fire_spit, fire_surge]);
 player2.addSkills([water_spike, water_splash]);
 player3.addSkills([air_burst, healing]);
 
+// Variables monstres
 monsteronomicon.createMonster('fire_monsterBig', 200, 8, 2, fire_hoof, fire_horn);
 monsteronomicon.createMonster('ice_monsterBig', 400, 3, 7, ice_spike, frost_spear);
 monsteronomicon.createMonster('dog_monsterBig', 250, 5, 4, fire_bite, fire_claw);
 
+// Musique & victoire
 var Music;
+
+var nb_Victories = 0;
 
 
 
 // Functions
 function generateFloor()
+// Génération du level à l'aide d'un tileset
 {
 	// Load a map from a 2D array of tile indices
     /*var BaseMaps = [ // 18*32 * 45*32 / 18*45 = 810
@@ -111,17 +107,18 @@ function generateFloor()
 }
 
 function generateControls()
+// Génération des contrôles dans la partie TopDown, avec les déplacements gauche droite haut bas
 {
 	// Right
-	myGame.input.keyboard.on('keydown-D', function (event) {
+	myGame.input.keyboard.on('keydown-D', function (event) { // Le joueur appuie sur D
 
-		if (!player1.bIsWalking)
+		if (!player1.bIsWalking) // Se lance uniquement si le joueur ne marche pas
 		{
-			var tile = layer.getTileAtWorldXY(player1.player_.x + 32, player1.player_.y, true);
+			var tile = layer.getTileAtWorldXY(player1.player_.x + 32, player1.player_.y, true); // On récupère la case à la destination
 
-			player1.direction = 'right';
+			player1.direction = 'right'; // On indique la direction pour l'animation
 	
-			if (tile.index === 2 || (tile.index >= 118 && tile.index <= 120))
+			if (tile.index === 2 || (tile.index >= 118 && tile.index <= 120)) // Vérification si une case nous bloque
 			{
 				//  Blocked, we can't move
 			}
@@ -129,10 +126,10 @@ function generateControls()
 			{
 				player1.bIsWalking = true;
 				player1.currentPos = [player1.player_.x, player1.player_.y];
-				player1.targetPos = [player1.player_.x + 32, player1.player_.y];
+				player1.targetPos = [player1.player_.x + 32, player1.player_.y]; // On cible la position de la case suivante
 			}
 		}
-	});
+	}); // Puis idem avec les autres touches pour les autres directions
 
 	// Left
 	myGame.input.keyboard.on('keydown-Q', function (event) {
@@ -200,7 +197,7 @@ function generateControls()
 		}
 	});
 
-	// combat
+	// combat // Debug
 	myGame.input.keyboard.on('keydown-E', function (event){
 
 		// myGame.scene.start('combatScene');
@@ -208,45 +205,65 @@ function generateControls()
 }
 
 function generateCombatControls()
-{
-    // P1 Attack 1
-	myGame.input.keyboard.on('keydown-W', function (event) {
+// Génère les contrôles dans la partie combat, avec les attaques des trois personnages différents
+	{
+	// P1 Attack 1
+	myGame.input.keyboard.on('keydown-W', function (event) { // Lorsque le joueur appuie sur la touche W
 
-		player_combat.playerArray[0].useSkill_i(player_combat.ennemiCreature, 0);
-	});
+		if (player_combat.bOver == false) // Si le combat n'est pas terminé (sert à éviter un combat infini lorsque le joueur spam les compétences)
+		{
+			player_combat.playerArray[0].useSkill_i(player_combat.ennemiCreature, 0); // Lance le 1er sort du personnage correspondant, sur la cible
+		}
+	}); // Idem pour les touches suivantes
 
-    // P1 Attack 2
+	// P1 Attack 2
 	myGame.input.keyboard.on('keydown-X', function (event) {
 
-		player_combat.playerArray[0].useSkill_i(player_combat.ennemiCreature, 1);
+		if (player_combat.bOver == false)
+		{
+			player_combat.playerArray[0].useSkill_i(player_combat.ennemiCreature, 1);
+		}
 	});
 
 	// P2 Attack 1
 	myGame.input.keyboard.on('keydown-C', function (event) {
 
-		player_combat.playerArray[1].useSkill_i(player_combat.ennemiCreature, 0);
+		if (player_combat.bOver == false)
+		{
+			player_combat.playerArray[1].useSkill_i(player_combat.ennemiCreature, 0);
+		}
 	});
 
-    // P2 Attack 2
+	// P2 Attack 2
 	myGame.input.keyboard.on('keydown-V', function (event) {
 
-		player_combat.playerArray[1].useSkill_i(player_combat.ennemiCreature, 1);
+		if (player_combat.bOver == false)
+		{
+			player_combat.playerArray[1].useSkill_i(player_combat.ennemiCreature, 1);
+		}
 	});
 
 	// P3 Attack 1
 	myGame.input.keyboard.on('keydown-B', function (event) {
 
-		player_combat.playerArray[2].useSkill_i(player_combat.ennemiCreature, 0);
+		if (player_combat.bOver == false)
+		{
+			player_combat.playerArray[2].useSkill_i(player_combat.ennemiCreature, 0);
+		}
 	});
 
-    // P3 Attack 2
+	// P3 Attack 2
 	myGame.input.keyboard.on('keydown-N', function (event) {
 
-		player_combat.playerArray[2].useSkill_i(player_combat.playerArray, 1);
+		if (player_combat.bOver == false)
+		{
+			player_combat.playerArray[2].useSkill_i(player_combat.playerArray, 1);
+		}
 	});
 }
 
 function clamp(min, max, number)
+// Retourne un nombre compris entre min & max compris
 {
     if (number < min)
     {
@@ -260,6 +277,7 @@ function clamp(min, max, number)
 }
 
 function clampLoop(min, max, number)
+// Retourne un nombre compris entre min & max compris, de manière à ce que quand le nombre est inférieur à min, il revienne à max et inversement
 {
     if (number < min)
     {
@@ -273,6 +291,7 @@ function clampLoop(min, max, number)
 }
 
 function generateMagic()
+// Mise en place des sorts
 {
 	fire_spit = new damageSkill('fire_spit', 5, 4, 'fire_spit');
 	fire_surge = new damageSkill('fire_surge', 1.5, 2, 'fire_surge');

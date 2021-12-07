@@ -1,4 +1,4 @@
-class wanderScene extends Phaser.Scene
+class wanderScene extends Phaser.Scene // Scène principale en TopDown
 {
     constructor()
     {
@@ -6,13 +6,10 @@ class wanderScene extends Phaser.Scene
     }
 
     preload()
+    // Prépare les assets utilisé dans le jeu
     {
         this.load.image('map-tiles', 'assets/tilemaps/Serene_Village_32x32.png');
         this.load.spritesheet('hero', 'assets/characters/Character_1.png', { frameWidth: 24, frameHeight: 32 });
-
-        /*this.load.spritesheet('fire_monster', 'assets/characters/Fire_Elemental_Sprite_Sheet.png', { frameWidth: 32, frameHeight: 32 }); // 32 * 32
-        this.load.spritesheet('ice_monster', 'assets/characters/Ice_Elemental_Sprite_Sheet.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('leaf_monster', 'assets/characters/Leaf_Elemental_Sprite_Sheet.png', { frameWidth: 32, frameHeight: 32 });*/
 
         this.load.image('back_image', 'assets/forest.png');
         this.load.image('fire_monsterBig', 'assets/Static/Side/FireHorse.png');
@@ -38,27 +35,24 @@ class wanderScene extends Phaser.Scene
         myGame = this;
 
         generateFloor();
-        player1.beginPlay();
+        player1.beginPlayWander();
 
         generateControls();
-
-        Music = myGame.sound.add('wanderSound', {volume: 0.3});
-        
-        Music.loop = true;
-        Music.play();
-        // Music.stop();
     }
 
     update ()
     {
         player1.play();
+
+        if (nb_Victories >= 3)
+        {
+            // console.log("GG");
+        }
     }
 }
 
 
-
-
-class combatScene extends Phaser.Scene
+class combatScene extends Phaser.Scene // Scène de combat
 {
     constructor()
     {
@@ -75,6 +69,10 @@ class combatScene extends Phaser.Scene
         generateCombatControls();
 
         player_combat.beginPlay();
+
+        Music = myGame.sound.add('wanderSound', {volume: 0.3}); // On ajoute de la musique pour le combat
+        Music.loop = true;
+        Music.play();
     }
 
     update ()
@@ -83,8 +81,8 @@ class combatScene extends Phaser.Scene
     }
 
 
-    // added
     initCombat()
+    // Prépare le combat & le décore
     {
         myGame.add.image(200, 100, 'back_image').setScale(1.3);
 
@@ -92,6 +90,7 @@ class combatScene extends Phaser.Scene
     }
 
     prepareMonster()
+    // Sélectionne un monstre encore disponible, c'est à dire un monstre qui n'a pas été vaincu
     {
         var i = Phaser.Math.Between(0, monsteronomicon.getMaxId());
 
@@ -104,6 +103,7 @@ class combatScene extends Phaser.Scene
     }
 
     generateFX()
+    // Génère les animations pour les sorts
     {
         myGame.anims.create({
             key: 'fire_surge',
@@ -143,9 +143,7 @@ class combatScene extends Phaser.Scene
 }
 
 
-
-
-class gameOver extends Phaser.Scene
+class gameOver extends Phaser.Scene // Scène de GameOver
 {
     constructor()
     {
@@ -156,23 +154,33 @@ class gameOver extends Phaser.Scene
     {
         myGame = this;
         
-        // wander
-        myGame.input.keyboard.on('keydown-A', function (event){
+        myGame.input.keyboard.on('keydown-A', function (event){ // Le joueur peut relancer plus tôt s'il désire
 
-            myGame.scene.start('wanderScene');
+            this.reloadGame();
+        });
+        myGame.input.keyboard.on('keydown-R', function (event){ // Le joueur peut relancer plus tôt s'il désire
+
+            this.reloadGame();
         });
 
-        myGame.add.image(150, 100, 'GameOver').setOrigin(0, 0);
+        myGame.add.image(150, 100, 'GameOver').setOrigin(0, 0); // Ajoute l'image de fond pour le combat
 
-        Music.stop();
         Music = myGame.sound.add('gameOver', {volume: 0.3});
         Music.loop = false;
         Music.play();
+
+        myGame.time.delayedCall(5000, this.reloadGame, [], this); // Au bout de 5 secondes, relance le jeu
     }
 
     update ()
     {
-        
+        // None
+    }
+
+    reloadGame()
+    // Relance le jeu
+    {
+        location.reload();
     }
     
 }

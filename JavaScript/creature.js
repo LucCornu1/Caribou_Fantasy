@@ -1,4 +1,5 @@
 class creature extends character
+// Hérite du character
 {
 // public
     player_c;
@@ -40,36 +41,29 @@ class creature extends character
         this.#graphics.fillStyle(0x2d2d2d);
         this.#graphics.fillRect(300, 550, player_combat.ennemiCreature.maxHealth, 16);
         this.#graphics.fillStyle(0x2dff2d);
-        this.#graphics.fillRect(300, 550, player_combat.ennemiCreature.currentHealth, 16);
-
-        /*this.#graphics.fillStyle(0x00C7FF, 1);
-        this.#graphics.slice(550, 450, 10, Phaser.Math.DegToRad(360), Phaser.Math.DegToRad(0), true);
-        this.#graphics.fillPath();*/
-
+        this.#graphics.fillRect(300, 550, player_combat.ennemiCreature.currentHealth, 16); // Ajout de la barre de vie
 
         var nb_PlayersAlive = 0;
-
-        playerArray.forEach(player => {
+        playerArray.forEach(player => { // Compte le nombre de personnage joueur encore en vie
             if (player.currentHealth > 0)
             {
                 nb_PlayersAlive++;
             }
         });
 
-        if (this.currentHealth > 0 && nb_PlayersAlive > 0)
+        if (this.currentHealth > 0 && nb_PlayersAlive > 0) // S'il reste des personnages joueurs en vie, et que la créature est encore en vie
         {
-            // console.log(this.currentHealth);
-            var target = playerArray[Phaser.Math.Between(0, 2)];
+            var target = playerArray[Phaser.Math.Between(0, 2)]; // Choisi une cible aléatoire
 
-            while (target.currentHealth <= 0)
+            while (target.currentHealth <= 0) // Choisir une cible en vie
             {
                 target = playerArray[Phaser.Math.Between(0, 2)];
             }
 
-            this.useSkill_i(target, Phaser.Math.Between(0, 1)); // Phaser.Math.beetween(0, 2)
+            this.useSkill_i(target, Phaser.Math.Between(0, 1)); // Lance un sort aléatoire
         }else if (this.currentHealth <= 0) {
             // this.bDead = true;
-            this.player_c.visible = false;
+            this.player_c.visible = false; // Rend la créature invisible lors de sa mort
         }
     }
 }

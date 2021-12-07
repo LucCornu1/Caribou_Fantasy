@@ -1,4 +1,5 @@
 class skill
+// La classe pour les sorts à lancer par les characters
 {
 // public
     attackName = 'error_none';
@@ -14,30 +15,30 @@ class skill
 
     // Functions
     useSkill(attacker, target)
+    // Incante le sort avec les statistiques de son lanceur
     {
-        // console.log(this.attackName + this.bReady);
-
         if (this.bReady)
         {
             this.bReady = false;
 
-            this.effect = myGame.add.sprite(400, 450, this.effectName).setScale(2);
+            this.effect = myGame.add.sprite(400, 450, this.effectName).setScale(2); // Place l'effet du sort sur l'écran
             this.effect.visible = false;
 
-            myGame.time.delayedCall(this.castTime * 1000, this.castFinish, [attacker, target], this);
+            myGame.time.delayedCall(this.castTime * 1000, this.castFinish, [attacker, target], this); // Après le temps d'incatation, lance le sort
         }
     }
 
     castFinish(attacker, target)
+    // Après le temps d'incantation, lance le sort
     {
         this.bReady = true;
 
-        if(attacker.type == "player")
+        if(attacker.type == "player") // Affiche l'animation seulement si c'est un joueur qui lance le sort
         {
             this.effect.visible = true;
             this.effect.anims.play(this.effectName);
 
-            this.effect.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function () {
+            this.effect.on(Phaser.Animations.Events.ANIMATION_COMPLETE, function () { // Remet l'effet invisible après avoir terminé son effet
                 this.effect.visible = false;
             }, this);
         }        
@@ -48,6 +49,8 @@ class skill
 
 
 class damageSkill extends skill
+// Hérite de la classe Skill
+// Sort qui inflige des dégâts
 {
     constructor(name, damage_multiplier, cast_time, effect_name = 'error_none')
     {
@@ -77,6 +80,8 @@ class damageSkill extends skill
 
 
 class healSkill extends skill
+// Hérite de la classe Skill
+// Sort qui restaure des points de vie
 {
     constructor(name, damage_multiplier, cast_time, effect_name = 'error_none')
     {
@@ -96,7 +101,7 @@ class healSkill extends skill
 
             var currentHeal = this.dmgMultiplier * attacker.attack;
     
-            target.forEach(player => {
+            target.forEach(player => { // Lance la guérison sur toutes les cibles
                 player.heal(currentHeal);
             });
         }

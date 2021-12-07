@@ -1,4 +1,5 @@
 class player extends character
+// Hérite du character
 {
 // public
 	bIsWalking = false;
@@ -18,12 +19,9 @@ class player extends character
 		this.direction = 'down';
 		this.currentPos = [46, 48];
 		this.targetPos = [46, 48];
-		
 		this.#time = 24;
 		this.#i = 0;
-
 		this.playerNumber = number;
-
 		this.type = "player";
 	}
 
@@ -31,12 +29,16 @@ class player extends character
 	beginPlay()
 	{
 		super.beginPlay();
-
-		this.generateAnimation();
 		this.#graphics = myGame.add.graphics();
 
 		this.player_ = myGame.physics.add.sprite(46 + 290 * this.playerNumber, 48, 'hero'); // Base [14 , 16] (+32 = [46 , 48])
-   		// this.player_.setCollideWorldBounds(true);
+	}
+
+	// call in create
+	beginPlayWander()
+	{
+		this.generateAnimation();
+		this.player_ = myGame.physics.add.sprite(this.currentPos[0], this.currentPos[1], 'hero'); // Base [14 , 16] (+32 = [46 , 48])
 	}
 
 	// call in update
@@ -54,7 +56,7 @@ class player extends character
         this.#graphics.fillStyle(0xff0000);
         this.#graphics.fillRect(80 + 290 * this.playerNumber, 32, this.maxHealth, 16);
         this.#graphics.fillStyle(0x2dff2d);
-        this.#graphics.fillRect(80 + 290 * this.playerNumber, 32, this.currentHealth, 16);
+        this.#graphics.fillRect(80 + 290 * this.playerNumber, 32, this.currentHealth, 16); // Ajout de la barre de vie
 
 		// console.log(this.bReady);
 		if (!this.bReady)
@@ -63,27 +65,28 @@ class player extends character
 			this.#graphics.fillStyle(0x2d2d2d);
 			this.#graphics.fillRect(80 + 290 * this.playerNumber, 64, 100, 16);
 			this.#graphics.fillStyle(0x00F5FF);
-			this.#graphics.fillRect(80 + 290 * this.playerNumber, 64, this.timedEvent.getProgress() * 100, 16);
+			this.#graphics.fillRect(80 + 290 * this.playerNumber, 64, this.timedEvent.getProgress() * 100, 16); // Ajout de la barre de chargement pour du feedback si le joueur lance un sort
 		}
 	}
 
 
 	// added
 	movePlayer()
+	// Bouge le joueur sur la prochaine case, avec la bonne animation
 	{
 		if (this.bIsWalking)
 		{
 			this.walkAnimation();
 			
-			if (this.#i <= this.#time)
+			if (this.#i <= this.#time) // Bouge le joueur petit à petit avec un 'Lerp' pour avoir un effet de transition
 			{
 				this.player_.x = this.currentPos[0] + (this.targetPos[0] - this.currentPos[0]) * this.#i / this.#time;
 				this.player_.y = this.currentPos[1] + (this.targetPos[1] - this.currentPos[1]) * this.#i / this.#time;
 				this.#i++;
-			}else{
+			}else{ // A la fin du mouvement, le joueur à 1 chance sur 10 de tomber sur un combat
 				this.#i = 0;
 				this.bIsWalking = false;
-				if (Phaser.Math.Between(0, 99) < 9)
+				if (Phaser.Math.Between(0, 99) < 9 && nb_Victories < 3)
 				{
 					myGame.scene.start('combatScene');
 				}
@@ -95,6 +98,7 @@ class player extends character
 	}
 
 	generateAnimation()
+	// Génère les animations pour le joueur
 	{
 		myGame.anims.create({
 			key: 'down',
@@ -150,6 +154,7 @@ class player extends character
 	}
 
 	walkAnimation()
+	// Utilise la bonne animation de marche en fonction de la direction
 	{
 		if (this.direction === 'left')
 		{
@@ -169,6 +174,7 @@ class player extends character
 	}
 
 	idleAnimation()
+	// Utilise la bonne animation d'attente en fonction de la direction
 	{
 		if (this.direction === 'left')
 		{
