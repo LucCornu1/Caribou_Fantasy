@@ -6,6 +6,6 @@ Les touches pour se déplacer :
 Z, S, Q, D
 
 Les touches pour attaquer :
-J1 : W & X
-J2 : C & V
-J3 : B & N
+J1 : W & X ;
+J2 : C & V ;
+J3 : B & N ;
